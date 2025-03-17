@@ -10,7 +10,13 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@fullcalendar/daygrid": "^6.1.15",
+        "@fullcalendar/interaction": "^6.1.15",
+        "@fullcalendar/react": "^6.1.15",
+        "chart.js": "^4.4.8",
+        "date-fns": "^4.1.0",
         "react": "^19.0.0",
+        "react-chartjs-2": "^5.3.0",
         "react-dom": "^19.0.0",
         "react-router-dom": "^7.3.0"
     },

@@ -122,7 +122,6 @@ export default function StatisticsPage() {
 					<BiggestWinLoss tradeStats={tradeStats}></BiggestWinLoss>
 					<WinRate tradeStats={tradeStats}></WinRate>
 					<AvgWinLoss tradeStats={tradeStats}></AvgWinLoss>
-
 					<ProfitChart trades={trades}></ProfitChart>
 				</div>
 				<TradeForm addTrade={addTrade}></TradeForm>
