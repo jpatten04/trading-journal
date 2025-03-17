@@ -1,0 +1,45 @@
+.content {
+	background-color: #333;
+	border-radius: 0.3rem;
+	padding: 0.6rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.top {
+}
+
+.bottom {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.wins_losses {
+	display: flex;
+	gap: 2rem;
+}
+
+.wins {
+}
+
+.losses {
+}
+
+.win_rate_line {
+	display: flex;
+	height: 0.6rem;
+	width: 100%;
+	background-color: gray;
+}
+
+.green_line {
+	background-color: green;
+	height: 100%;
+}
+
+.red_line {
+	background-color: red;
+	height: 100%;
+}

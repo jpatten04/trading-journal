@@ -1,0 +1,51 @@
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #111;
+	padding: 0.7rem 1.8rem;
+	width: 100vw;
+}
+
+.header_left {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+.title {
+	font-size: 2.2rem;
+}
+
+.page_buttons {
+	display: flex;
+	gap: 0.6rem;
+}
+
+.page_buttons .link {
+	background-color: #444;
+	padding: 0.5rem 0.8rem;
+	font-size: 1.3rem;
+	border-radius: 0.3rem;
+}
+
+.page_buttons .link:hover {
+	background-color: #333;
+}
+
+.header_buttons {
+	display: flex;
+	gap: 1rem;
+}
+
+.button {
+	background-color: #888;
+	padding: 0.5rem 0.8rem;
+	font-size: 1.3rem;
+	border-radius: 0.3rem;
+}
+
+.button:hover {
+	cursor: pointer;
+	background-color: #555;
+}
