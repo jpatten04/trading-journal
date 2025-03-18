@@ -13,15 +13,25 @@
         "@fullcalendar/daygrid": "^6.1.15",
         "@fullcalendar/interaction": "^6.1.15",
         "@fullcalendar/react": "^6.1.15",
+        "@types/node": "^22.13.10",
         "chart.js": "^4.4.8",
+        "cors": "^2.8.5",
         "date-fns": "^4.1.0",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "mysql2": "^3.13.0",
+        "pg": "^8.14.1",
         "react": "^19.0.0",
         "react-chartjs-2": "^5.3.0",
         "react-dom": "^19.0.0",
-        "react-router-dom": "^7.3.0"
+        "react-router-dom": "^7.3.0",
+        "ts-node": "^10.9.2"
     },
     "devDependencies": {
         "@eslint/js": "^9.21.0",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
+        "@types/pg": "^8.11.11",
         "@types/react": "^19.0.10",
         "@types/react-dom": "^19.0.4",
         "@vitejs/plugin-react": "^4.3.4",
@@ -32,5 +42,10 @@
         "typescript": "~5.7.2",
         "typescript-eslint": "^8.24.1",
         "vite": "^6.2.0"
-    }
+    },
+    "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+    "main": "eslint.config.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
 }

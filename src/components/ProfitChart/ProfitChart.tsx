@@ -14,7 +14,6 @@ export default function ProfitChart({ trades }: Props) {
 	const chartData: ChartData<"line"> = useMemo(() => {
 		let data: number[] = [];
 		let labels: (string | number)[] = [];
-		let xAxis = "";
 
 		if (filter == "by-trade") {
 			let cumulative = 0;
@@ -23,7 +22,6 @@ export default function ProfitChart({ trades }: Props) {
 				data.push(cumulative);
 				labels.push(index + 1);
 			});
-			xAxis = "Trade";
 		} else if (filter == "by-day") {
 			let dailyProfit: Record<string, number> = {};
 			trades.forEach((trade) => {
@@ -36,7 +34,6 @@ export default function ProfitChart({ trades }: Props) {
 				data.push(cumulative);
 				labels.push(date);
 			});
-			xAxis = "Date";
 		}
 
 		return {
@@ -64,7 +61,7 @@ export default function ProfitChart({ trades }: Props) {
 		responsive: true,
 		scales: {
 			x: {
-				title: { display: true, text: filter === "by-trade" ? "Trade" : "Date", color: "white" },
+				title: { display: true, text: filter == "by-trade" ? "Trade" : "Date", color: "white" },
 				ticks: { color: "white" },
 			},
 			y: {

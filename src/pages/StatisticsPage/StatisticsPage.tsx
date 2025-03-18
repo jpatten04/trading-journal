@@ -50,11 +50,36 @@ export default function StatisticsPage() {
 		totalTrades: 0,
 	});
 
-	// add new trade to trades
-	const addTrade = (trade: Trade) => {
-		// update trades
-		setTrades([...trades, trade]);
+	const API_ADDRESS = "http://localhost:5000";
+	const accountId = 1;
+
+	// add trade to database
+	const addTrade = async (trade: Trade) => {
+		// add trade to database
+		await fetch(`${API_ADDRESS}/api/accounts/${accountId}/trades`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(trade),
+		});
+
+		// refetch trades
+		fetchTrades(accountId);
 	};
+
+	// get trades from database
+	const fetchTrades = async (accountId: number) => {
+		fetch(`${API_ADDRESS}/api/accounts/${accountId}/trades`)
+			.then((res) => res.json())
+			.then((data) => {
+				setTrades(data);
+			})
+			.catch((err) => console.error(err));
+	};
+
+	// fetch trades when component mounts
+	useEffect(() => {
+		fetchTrades(accountId);
+	}, [accountId]);
 
 	// remove trade from trades
 	const removeTrade = (index: number) => {
@@ -75,7 +100,7 @@ export default function StatisticsPage() {
 		let biggestWin = 0;
 		let biggestLoss = 0;
 
-		trades.forEach((trade) => {
+		trades.forEach((trade: Trade) => {
 			if (trade.profit > 0) {
 				wins++;
 				totalProfit += trade.profit;

@@ -30,8 +30,6 @@ const TradeForm = ({ addTrade }: Props) => {
 	const handleChange = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const target = e.target as HTMLInputElement | HTMLSelectElement;
 		setTrade({ ...trade, [target.name]: target.value });
-
-		console.log(target.name, ": ", target.value);
 	};
 
 	// add trade to trades
@@ -42,7 +40,6 @@ const TradeForm = ({ addTrade }: Props) => {
 		const tradeProfit = (trade.exitPrice - trade.entryPrice) * (trade.direction == "long" ? 1 : -1) * pricePerPoint[trade.symbol] * trade.contracts - trade.fees;
 
 		// add trade with profit
-		console.log(trade);
 		addTrade({ ...trade, profit: tradeProfit });
 
 		// reset trade data and form
