@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trade } from "../../pages/StatisticsPage/StatisticsPage";
+import { Trade } from "../../types";
 import styles from "./tradeform.module.css";
 
 interface Props {
@@ -16,6 +16,7 @@ const pricePerPoint: Record<string, number> = {
 
 const TradeForm = ({ addTrade }: Props) => {
 	const [trade, setTrade] = useState<Trade>({
+		tradeId: 0,
 		date: "",
 		symbol: "NQ",
 		direction: "long",
@@ -43,7 +44,7 @@ const TradeForm = ({ addTrade }: Props) => {
 		addTrade({ ...trade, profit: tradeProfit });
 
 		// reset trade data and form
-		setTrade({ date: "", symbol: "NQ", direction: "long", entryPrice: 0, exitPrice: 0, contracts: 0, fees: 0, profit: 0 });
+		setTrade({ tradeId: 0, date: "", symbol: "NQ", direction: "long", entryPrice: 0, exitPrice: 0, contracts: 0, fees: 0, profit: 0 });
 		(e.target as HTMLFormElement).reset();
 	};
 

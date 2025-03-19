@@ -2,12 +2,11 @@ import styles from "./accountview.module.css";
 
 interface Props {
 	accountName: string;
-	setSelected: (name: string) => void;
 }
 
-const AccountView = ({ accountName, setSelected }: Props) => {
+const AccountView = ({ accountName }: Props) => {
 	return (
-		<div className={styles.accounts} onClick={() => setSelected(accountName)}>
+		<div className={styles.accounts}>
 			<h1 className={styles.account_name}>{accountName}</h1>
 		</div>
 	);

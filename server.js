@@ -5,10 +5,10 @@ import mysql from "mysql2/promise";
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-const pool = mysql.createPool({
+const db = mysql.createPool({
 	host: "localhost",
 	user: "root",
 	password: "whale123",
@@ -17,79 +17,48 @@ const pool = mysql.createPool({
 	connectionLimit: 10,
 });
 
-// Get all users
-app.get("/api/users", async (req, res) => {
-	try {
-		const [rows] = await pool.query("SELECT * FROM users");
-		res.json(rows);
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
-	}
-});
-
-// Create a new user
-app.post("/api/users", async (req, res) => {
-	const { username, email } = req.body;
-	try {
-		const [result] = await pool.query("INSERT INTO users (username, email) VALUES (?, ?)", [username, email]);
-		res.status(201).json(result);
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
-	}
-});
-
-// Get all accounts for a user
-app.get("/api/users/:userId/accounts", async (req, res) => {
+// Get a user with all their accounts and trades
+app.get("/api/users/:userId/full", async (req, res) => {
 	const { userId } = req.params;
 	try {
-		const [rows] = await pool.query("SELECT * FROM accounts WHERE user_id = ?", [userId]);
-		res.json(rows);
+		// First, fetch the user information
+		const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
+		if (userRows.length === 0) {
+			return res.status(404).send("User not found");
+		}
+		const user = userRows[0];
+
+		// Fetch all accounts for the user
+		const [accountRows] = await db.query("SELECT * FROM accounts WHERE user_id = ?", [userId]);
+
+		// For each account, fetch the corresponding trades
+		for (let account of accountRows) {
+			const [tradeRows] = await db.query("SELECT * FROM trades WHERE account_id = ?", [account.account_id]);
+			account.trades = tradeRows;
+		}
+
+		// Now attach accounts to the user object
+		user.accounts = accountRows;
+
+		// Return the full user data with accounts and trades
+		res.json(user);
 	} catch (err) {
 		console.error(err);
 		res.status(500).send("Server error");
 	}
 });
 
-// Create a new account for a user
-app.post("/api/users/:userId/accounts", async (req, res) => {
-	const { userId } = req.params;
-	const { account_name } = req.body;
-	try {
-		const [result] = await pool.query("INSERT INTO accounts (user_id, account_name) VALUES (?, ?)", [userId, account_name]);
-		res.status(201).json(result);
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
-	}
-});
+// --- USERS ---
 
-// Get all trades for an account
-app.get("/api/accounts/:accountId/trades", async (req, res) => {
-	const { accountId } = req.params;
-	try {
-		const [rows] = await pool.query("SELECT account_id, date, symbol, direction, entryPrice, exitPrice, contracts, fees, profit FROM trades WHERE account_id = ?", [accountId]);
+// --- ACCOUNTS ---
 
-		const formattedTrades = rows.map((trade) => ({
-			...trade,
-			date: trade.date.toISOString().split("T")[0],
-			profit: parseFloat(trade.profit),
-		}));
-
-		res.json(formattedTrades);
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
-	}
-});
-
-// Add a new trade to an account
+// --- TRADES ---
 app.post("/api/accounts/:accountId/trades", async (req, res) => {
 	const { accountId } = req.params;
 	const { date, symbol, direction, entryPrice, exitPrice, contracts, fees, profit } = req.body;
+
 	try {
-		const [result] = await pool.query("INSERT INTO trades (account_id, date, symbol, direction, entryPrice, exitPrice, contracts, fees, profit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+		await db.execute("INSERT INTO trades (account_id, date, symbol, direction, entry_price, exit_price, contracts, fees, profit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
 			accountId,
 			date,
 			symbol,
@@ -100,13 +69,22 @@ app.post("/api/accounts/:accountId/trades", async (req, res) => {
 			fees,
 			profit,
 		]);
-		res.status(201).json(result);
 	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
+		res.status(500).json({ error: err.message });
 	}
 });
 
+app.delete("/api/accounts/:accountId/trades/:tradeId", async (req, res) => {
+	const { tradeId } = req.params;
+
+	try {
+		await db.execute("DELETE FROM trades WHERE trade_id = ?", [tradeId]);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+// Start Server
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
 });

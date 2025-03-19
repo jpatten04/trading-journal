@@ -1,13 +1,14 @@
-import { Trade } from "../../pages/StatisticsPage/StatisticsPage";
+import { useGlobalState } from "../../contexts/GlobalContext";
 import styles from "./tradehistory.module.css";
 
 interface Props {
-	trades: Trade[];
 	removeTrade: (index: number) => void;
 	clearTrades: () => void;
 }
 
-const TradeHistory = ({ trades, removeTrade, clearTrades }: Props) => {
+const TradeHistory = ({ removeTrade, clearTrades }: Props) => {
+	const { trades } = useGlobalState();
+
 	return (
 		<div className={styles.content}>
 			<div className={styles.content_header}>
@@ -47,7 +48,7 @@ const TradeHistory = ({ trades, removeTrade, clearTrades }: Props) => {
 							<td>${Number(trade.fees).toFixed(2)}</td>
 							<td style={{ color: trade.profit >= 0 ? "green" : "red" }}>${Number(trade.profit).toFixed(2)}</td>
 							<td>
-								<button onClick={() => removeTrade(index)}>Remove</button>
+								<button onClick={() => removeTrade(trades[index].tradeId)}>Remove</button>
 							</td>
 						</tr>
 					))}

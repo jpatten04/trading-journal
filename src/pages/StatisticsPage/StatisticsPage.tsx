@@ -7,36 +7,12 @@ import BiggestWinLoss from "../../components/BiggestWinLoss/BiggestWinLoss";
 import ProfitChart from "../../components/ProfitChart/ProfitChart";
 import AvgWinLoss from "../../components/AvgWinLoss/AvgWinLoss";
 import WinRate from "../../components/WinRate/WinRate";
+import { useGlobalState } from "../../contexts/GlobalContext";
+import { Trade, TradeStats } from "../../types";
 import styles from "./statisticspage.module.css";
 
-export interface Trade {
-	date: string;
-	symbol: string;
-	direction: string;
-	entryPrice: number;
-	exitPrice: number;
-	contracts: number;
-	fees: number;
-	profit: number;
-}
-
-export interface TradeStats {
-	totalProfit: number;
-	totalLoss: number;
-	totalPnL: number;
-	wins: number;
-	losses: number;
-	winRate: number;
-	biggestWin: number;
-	biggestLoss: number;
-	averageWin: number;
-	averageLoss: number;
-	totalTrades: number;
-}
-
 export default function StatisticsPage() {
-	const [trades, setTrades] = useState<Trade[]>([]);
-	const [tradeStats, setTradeStats] = useState({
+	const [tradeStats, setTradeStats] = useState<TradeStats>({
 		totalProfit: 0,
 		totalLoss: 0,
 		totalPnL: 0,
@@ -50,49 +26,40 @@ export default function StatisticsPage() {
 		totalTrades: 0,
 	});
 
-	const API_ADDRESS = "http://localhost:5000";
-	const accountId = 1;
+	const { API_ADDRESS, currentAccount, trades, setTrades } = useGlobalState();
+
+	// get all trades on load
+	useEffect(() => {
+		setTrades(currentAccount.trades);
+	}, [currentAccount.trades]);
 
 	// add trade to database
 	const addTrade = async (trade: Trade) => {
-		// add trade to database
-		await fetch(`${API_ADDRESS}/api/accounts/${accountId}/trades`, {
+		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount.accountId}/trades`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(trade),
-		});
-
-		// refetch trades
-		fetchTrades(accountId);
+		})
+			.then((newTrade) => setTrades((prevTrades: Trade[]) => [...prevTrades, newTrade]))
+			.catch((err) => console.log("Error adding trade: ", err));
 	};
 
-	// get trades from database
-	const fetchTrades = async (accountId: number) => {
-		fetch(`${API_ADDRESS}/api/accounts/${accountId}/trades`)
-			.then((res) => res.json())
-			.then((data) => {
-				setTrades(data);
-			})
-			.catch((err) => console.error(err));
+	// remove trade from database
+	const removeTrade = async (tradeId: number) => {
+		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount.accountId}/trades/${tradeId}`, {
+			method: "DELETE",
+		})
+			.then(() => setTrades((prevTrades: Trade[]) => prevTrades.filter((trade) => trade.tradeId != tradeId)))
+			.catch((err) => console.error("Error removing trade: ", err));
 	};
 
-	// fetch trades when component mounts
+	// remove all trades from database
+	const clearTrades = () => {};
+
+	// recalculate stats whenever trade is added or removed
 	useEffect(() => {
-		fetchTrades(accountId);
-	}, [accountId]);
+		if (trades.length > 0) console.log(trades);
 
-	// remove trade from trades
-	const removeTrade = (index: number) => {
-		setTrades((prevTrades) => prevTrades.filter((_, i) => i != index));
-	};
-
-	// remove all trades from trades
-	const clearTrades = () => {
-		setTrades([]);
-	};
-
-	// calculate stats whenever trade is added or removed
-	useEffect(() => {
 		let wins = 0;
 		let losses = 0;
 		let totalProfit = 0;
@@ -150,7 +117,7 @@ export default function StatisticsPage() {
 					<ProfitChart trades={trades}></ProfitChart>
 				</div>
 				<TradeForm addTrade={addTrade}></TradeForm>
-				<TradeHistory trades={trades} removeTrade={removeTrade} clearTrades={clearTrades}></TradeHistory>
+				<TradeHistory removeTrade={removeTrade} clearTrades={clearTrades}></TradeHistory>
 			</div>
 		</div>
 	);
