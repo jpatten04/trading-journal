@@ -33,6 +33,10 @@
 	background-color: #333;
 }
 
+.username_display {
+	align-self: center;
+}
+
 .manage_user_buttons {
 	display: flex;
 	gap: 0.5rem;

@@ -1,64 +1,114 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Header from "../../components/Header/Header";
 import TradeForm from "../../components/TradeForm/TradeForm";
 import TradeHistory from "../../components/TradeHistory/TradeHistory";
-import TotalPnL from "../../components/TotalPnL/TotalPnL";
-import BiggestWinLoss from "../../components/BiggestWinLoss/BiggestWinLoss";
-import ProfitChart from "../../components/ProfitChart/ProfitChart";
-import AvgWinLoss from "../../components/AvgWinLoss/AvgWinLoss";
-import WinRate from "../../components/WinRate/WinRate";
+import TotalPnL from "../../components/stats/TotalPnL/TotalPnL";
+import BiggestWinLoss from "../../components/stats/BiggestWinLoss/BiggestWinLoss";
+import ProfitChart from "../../components/stats/ProfitChart/ProfitChart";
+import AvgWinLoss from "../../components/stats/AvgWinLoss/AvgWinLoss";
+import WinRate from "../../components/stats/WinRate/WinRate";
 import { useGlobalState } from "../../contexts/GlobalContext";
-import { Trade, TradeStats } from "../../types";
+import { Account, Trade, TradeStats } from "../../types";
 import styles from "./statisticspage.module.css";
 
 export default function StatisticsPage() {
-	const [tradeStats, setTradeStats] = useState<TradeStats>({
-		totalProfit: 0,
-		totalLoss: 0,
-		totalPnL: 0,
-		wins: 0,
-		losses: 0,
-		winRate: 0,
-		biggestWin: 0,
-		biggestLoss: 0,
-		averageWin: 0,
-		averageLoss: 0,
-		totalTrades: 0,
-	});
-
-	const { API_ADDRESS, currentAccount, trades, setTrades } = useGlobalState();
+	const { API_ADDRESS, currentAccount, setCurrentAccount, trades, setTrades } = useGlobalState();
 
 	// get all trades on load
 	useEffect(() => {
-		setTrades(currentAccount?.trades);
-	}, [currentAccount?.trades]);
+		if (currentAccount) {
+			const newTrades = currentAccount.trades || [];
+			setTrades(newTrades);
+			sessionStorage.setItem("trades", JSON.stringify(newTrades));
+		}
+	}, [currentAccount]);
 
 	// add trade to database
 	const addTrade = async (trade: Trade) => {
-		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(trade),
-		})
-			.then((newTrade) => setTrades((prevTrades: Trade[]) => [...prevTrades, newTrade]))
-			.catch((err) => console.log("Error adding trade: ", err));
+		// check if user has active account
+		if (!currentAccount) {
+			alert("Must create an account being entering a trade.");
+			return;
+		}
+
+		try {
+			const response = await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(trade),
+			});
+
+			// check for valid response
+			if (!response.ok) {
+				const errorMessage = await response.text();
+				alert("Failed to add trade: " + errorMessage);
+				return;
+			}
+
+			// get response data
+			const data = await response.json();
+
+			// update trades state
+			setTrades((prevTrades: Trade[]) => {
+				const updatedTrades = [...prevTrades, data.trade];
+				sessionStorage.setItem("trades", JSON.stringify(updatedTrades));
+				return updatedTrades;
+			});
+
+			// update current account state
+			setCurrentAccount((prevAccount: Account) => {
+				const updatedAccount = { ...prevAccount, trades: [...prevAccount.trades, data.trade] };
+				sessionStorage.setItem("currentAccount", JSON.stringify(updatedAccount));
+				return updatedAccount;
+			});
+		} catch (err) {
+			console.error("Error adding trade: ", err);
+		}
 	};
 
 	// remove trade from database
 	const removeTrade = async (tradeId: number) => {
-		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades/${tradeId}`, {
-			method: "DELETE",
-		})
-			.then(() => setTrades((prevTrades: Trade[]) => prevTrades.filter((trade) => trade.tradeId != tradeId)))
-			.catch((err) => console.error("Error removing trade: ", err));
+		try {
+			const response = await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades/${tradeId}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) return;
+
+			// update trades state
+			setTrades((prevTrades: Trade[]) => {
+				const updatedTrades = prevTrades.filter((trade) => trade.tradeId !== tradeId);
+				sessionStorage.setItem("trades", JSON.stringify(updatedTrades));
+				return updatedTrades;
+			});
+
+			// update current account state
+			setCurrentAccount((prevAccount: Account) => {
+				const updatedAccount = { ...prevAccount, trades: prevAccount.trades.filter((trade) => trade.tradeId !== tradeId) };
+				sessionStorage.setItem("currentAccount", JSON.stringify(updatedAccount));
+				return updatedAccount;
+			});
+		} catch (err) {
+			console.error("Error removing trade: ", err);
+		}
 	};
 
-	// remove all trades from database
-	const clearTrades = () => {};
-
 	// recalculate stats whenever trade is added or removed
-	useEffect(() => {
-		if (!trades) return;
+	const tradeStats: TradeStats = useMemo(() => {
+		if (!trades)
+			return {
+				totalProfit: 0,
+				totalLoss: 0,
+				totalPnL: 0,
+				wins: 0,
+				losses: 0,
+				winRate: 0,
+				biggestWin: 0,
+				biggestLoss: 0,
+				averageWin: 0,
+				averageLoss: 0,
+				totalTrades: 0,
+			};
 
 		let wins = 0;
 		let losses = 0;
@@ -89,7 +139,7 @@ export default function StatisticsPage() {
 		const averageWin = wins > 0 ? totalProfit / wins : 0;
 		const averageLoss = losses > 0 ? totalLoss / losses : 0;
 
-		setTradeStats({
+		return {
 			totalProfit: totalProfit,
 			totalLoss: totalLoss,
 			totalPnL: totalPnL,
@@ -101,7 +151,7 @@ export default function StatisticsPage() {
 			averageWin: averageWin,
 			averageLoss: averageLoss,
 			totalTrades: totalTrades,
-		});
+		};
 	}, [trades]);
 
 	return (
@@ -117,7 +167,7 @@ export default function StatisticsPage() {
 					<ProfitChart trades={trades || []}></ProfitChart>
 				</div>
 				<TradeForm addTrade={addTrade}></TradeForm>
-				<TradeHistory removeTrade={removeTrade} clearTrades={clearTrades}></TradeHistory>
+				<TradeHistory removeTrade={removeTrade}></TradeHistory>
 			</div>
 		</div>
 	);

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Trade } from "../../types";
+import { Trade } from "../../../types";
 import { Chart, ChartData, ChartOptions } from "chart.js/auto";
 import styles from "./profitchart.module.css";
 

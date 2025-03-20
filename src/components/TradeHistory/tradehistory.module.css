@@ -17,18 +17,6 @@
 	font-size: 1.8rem;
 }
 
-.content_header_button {
-	background-color: red;
-	font-size: 1.4rem;
-	padding: 0.2rem 0.5rem;
-	border-radius: 0.2rem;
-}
-
-.content_header_button:hover {
-	background-color: darkred;
-	cursor: pointer;
-}
-
 table {
 	width: 100%;
 	border-collapse: collapse;

@@ -3,19 +3,15 @@ import styles from "./tradehistory.module.css";
 
 interface Props {
 	removeTrade: (index: number) => void;
-	clearTrades: () => void;
 }
 
-const TradeHistory = ({ removeTrade, clearTrades }: Props) => {
+const TradeHistory = ({ removeTrade }: Props) => {
 	const { trades } = useGlobalState();
 
 	return (
 		<div className={styles.content}>
 			<div className={styles.content_header}>
 				<h2 className={styles.content_title}>Trade History</h2>
-				<button className={styles.content_header_button} onClick={clearTrades}>
-					Clear All
-				</button>
 			</div>
 			<table>
 				<thead>

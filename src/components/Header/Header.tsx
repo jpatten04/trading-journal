@@ -1,11 +1,25 @@
 import { Link } from "react-router-dom";
-import Register from "../Register/Register";
-import SignIn from "../SignIn/SignIn";
+import Register from "../manage-user/Register/Register";
+import SignIn from "../manage-user/SignIn/SignIn";
 import { useGlobalState } from "../../contexts/GlobalContext";
 import styles from "./header.module.css";
 
 const Header = () => {
-	const { isUserManage, setIsUserManage, user } = useGlobalState();
+	const { isUserManage, setIsUserManage, user, setUser, setCurrentAccount } = useGlobalState();
+
+	const handleLogout = (e: React.MouseEvent) => {
+		e.preventDefault();
+
+		// clear session storage
+		sessionStorage.removeItem("user");
+		sessionStorage.removeItem("trades");
+		sessionStorage.removeItem("currentAccount");
+
+		// clear globals
+		setUser(null);
+		setCurrentAccount(null);
+	};
+
 	return (
 		<div className={styles.header}>
 			<div className={styles.header_left}>
@@ -29,7 +43,10 @@ const Header = () => {
 				<button className={styles.button} style={user ? { display: "none" } : { display: "block" }} onClick={() => setIsUserManage({ isRegistering: false, isSigningIn: true })}>
 					Sign In
 				</button>
-				<button className={styles.button} style={user ? { display: "none" } : { display: "block" }} onClick={() => setIsUserManage(false)}>
+				<h2 className={styles.username_display} style={!user ? { display: "none" } : { display: "block" }}>
+					{user?.username}
+				</h2>
+				<button className={styles.button} style={!user ? { display: "none" } : { display: "block" }} onClick={handleLogout}>
 					Logout
 				</button>
 			</div>

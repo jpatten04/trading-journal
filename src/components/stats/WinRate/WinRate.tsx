@@ -1,4 +1,4 @@
-import { TradeStats } from "../../types";
+import { TradeStats } from "../../../types";
 import styles from "./winrate.module.css";
 
 interface Props {

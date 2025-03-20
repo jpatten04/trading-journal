@@ -1,0 +1,29 @@
+.accounts {
+	background-color: #333;
+	padding: 1rem;
+	border-radius: 0.6rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.accounts:hover,
+.selected {
+	transform: scale(101%);
+	background-color: #222;
+	cursor: pointer;
+}
+
+.account_name {
+}
+
+.remove_button {
+	background-color: red;
+	font-size: 1.2rem;
+	padding: 0.2rem 0.5rem;
+	border-radius: 0.2rem;
+}
+
+.remove_button:hover {
+	background-color: darkred;
+	cursor: pointer;
+}

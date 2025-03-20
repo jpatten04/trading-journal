@@ -1,4 +1,4 @@
-import { TradeStats } from "../../types";
+import { TradeStats } from "../../../types";
 import styles from "./totalpnl.module.css";
 
 interface Props {
