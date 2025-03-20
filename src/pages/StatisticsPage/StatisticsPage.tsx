@@ -30,12 +30,12 @@ export default function StatisticsPage() {
 
 	// get all trades on load
 	useEffect(() => {
-		setTrades(currentAccount.trades);
-	}, [currentAccount.trades]);
+		setTrades(currentAccount?.trades);
+	}, [currentAccount?.trades]);
 
 	// add trade to database
 	const addTrade = async (trade: Trade) => {
-		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount.accountId}/trades`, {
+		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(trade),
@@ -46,7 +46,7 @@ export default function StatisticsPage() {
 
 	// remove trade from database
 	const removeTrade = async (tradeId: number) => {
-		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount.accountId}/trades/${tradeId}`, {
+		await fetch(`${API_ADDRESS}/api/accounts/${currentAccount?.accountId}/trades/${tradeId}`, {
 			method: "DELETE",
 		})
 			.then(() => setTrades((prevTrades: Trade[]) => prevTrades.filter((trade) => trade.tradeId != tradeId)))
@@ -58,7 +58,7 @@ export default function StatisticsPage() {
 
 	// recalculate stats whenever trade is added or removed
 	useEffect(() => {
-		if (trades.length > 0) console.log(trades);
+		if (!trades) return;
 
 		let wins = 0;
 		let losses = 0;
@@ -114,7 +114,7 @@ export default function StatisticsPage() {
 					<BiggestWinLoss tradeStats={tradeStats}></BiggestWinLoss>
 					<WinRate tradeStats={tradeStats}></WinRate>
 					<AvgWinLoss tradeStats={tradeStats}></AvgWinLoss>
-					<ProfitChart trades={trades}></ProfitChart>
+					<ProfitChart trades={trades || []}></ProfitChart>
 				</div>
 				<TradeForm addTrade={addTrade}></TradeForm>
 				<TradeHistory removeTrade={removeTrade} clearTrades={clearTrades}></TradeHistory>

@@ -1,0 +1,69 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 18%;
+	height: 35%;
+	justify-content: space-between;
+	background-color: rgb(50, 50, 50, 1);
+	padding: 2rem;
+	border-radius: 1rem;
+	align-items: center;
+	z-index: 1;
+}
+
+.close_button {
+	background-color: transparent;
+	color: red;
+	font-weight: bold;
+	font-size: 1.8rem;
+	position: absolute;
+	top: 4%;
+	right: 5%;
+}
+
+.close_button:hover {
+	color: darkred;
+	cursor: pointer;
+}
+
+.title {
+	text-align: center;
+	font-size: 2.8rem;
+}
+
+.user_input {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+	width: 100%;
+	padding: 2rem 0;
+}
+
+.input_field {
+	color: black;
+	font-size: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+	padding: 0.4rem 0;
+	border-radius: 0.3rem;
+}
+
+.register_button {
+	background-color: #000;
+	color: white;
+	font-size: 1.5rem;
+	font-weight: bold;
+	padding: 0.5rem 0;
+	border-radius: 0.3rem;
+	margin-top: 1.4rem;
+	width: 100%;
+}
+
+.register_button:hover {
+	background-color: #111;
+	cursor: pointer;
+}

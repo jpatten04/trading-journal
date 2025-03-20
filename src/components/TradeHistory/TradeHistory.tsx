@@ -32,7 +32,7 @@ const TradeHistory = ({ removeTrade, clearTrades }: Props) => {
 					</tr>
 				</thead>
 				<tbody>
-					{trades.map((trade, index) => (
+					{trades?.map((trade, index) => (
 						<tr key={index}>
 							<td>{trade.date}</td>
 							<td>{trade.symbol}</td>

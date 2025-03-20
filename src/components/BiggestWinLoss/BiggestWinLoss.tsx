@@ -1,4 +1,4 @@
-import { TradeStats } from "../../pages/StatisticsPage/StatisticsPage";
+import { TradeStats } from "../../types";
 import styles from "./biggestwinloss.module.css";
 
 interface Props {

@@ -9,22 +9,25 @@ import { useGlobalState } from "./contexts/GlobalContext";
 export default function App() {
 	const { API_ADDRESS, setUser, setCurrentAccount } = useGlobalState();
 
-	const tempUser = 1;
+	const tempUser = null;
 
-	// get all user data
+	// get all user data [on sign-in]?
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
 				// Using fetch to get the data from your backend
 				const response = await fetch(`${API_ADDRESS}/api/users/${tempUser}/full`);
 
+				if (!response.ok) return;
+
 				// Convert the response to JSON
-				const data = await response?.json();
+				const data = await response.json();
 
 				// Assuming the structure of data matches the User type
 				const updatedUser: User = {
 					userId: data.user_id,
 					username: data.username,
+					password: data.password,
 					accounts: data.accounts.map(
 						(account: any) =>
 							({
@@ -37,10 +40,10 @@ export default function App() {
 											date: trade.date.split("T")[0],
 											symbol: trade.symbol,
 											direction: trade.direction,
-											entryPrice: trade.entry_price,
-											exitPrice: trade.exit_price,
-											contracts: trade.contracts,
-											fees: trade.fees,
+											entryPrice: Number(trade.entry_price),
+											exitPrice: Number(trade.exit_price),
+											contracts: Number(trade.contracts),
+											fees: Number(trade.fees),
 											profit: Number(trade.profit),
 										} as Trade)
 								),

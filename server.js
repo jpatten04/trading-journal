@@ -17,28 +17,64 @@ const db = mysql.createPool({
 	connectionLimit: 10,
 });
 
-// Get a user with all their accounts and trades
+// --- USERS ---
+app.post("/api/register", async (req, res) => {
+	const { username, password } = req.body;
+	try {
+		const [existingUser] = await db.execute("SELECT * FROM users WHERE username = ?", [username]);
+		if (existingUser.length > 0) {
+			return res.status(400).json({ message: "Username already in use" });
+		}
+
+		const [result] = await db.execute("INSERT INTO users (username, password) VALUES (?, ?)", [username, password]);
+		res.status(201).json({ message: "User registered" });
+	} catch (err) {
+		console.error("Error registering user: ", err);
+		res.status(500).send("Server error");
+	}
+});
+
+app.post("/api/login", async (req, res) => {
+	const [username, password] = req.body;
+	try {
+		const [users] = await db.execute("SELECT * FROM users WHERE username = ?", [username]);
+		if (users.length == 0) {
+			return res.status(400).json({ message: "Invalid username or password" });
+		}
+
+		const user = users[0];
+		if (password != user.password) {
+			return res.status(400).json({ message: "Invalid username or password" });
+		}
+
+		res.json({ message: "Login successful", userId: user.user_id, username: username, password: password });
+	} catch (err) {
+		console.error("Error signing in: ", err);
+		res.status(500).send("Server error");
+	}
+});
+
 app.get("/api/users/:userId/full", async (req, res) => {
-	const { userId } = req.params;
+	const { username } = req.params;
 	try {
 		// First, fetch the user information
-		const [userRows] = await db.query("SELECT * FROM users WHERE user_id = ?", [userId]);
-		if (userRows.length === 0) {
+		const [users] = await db.execute("SELECT * FROM users WHERE username = ?", [username]);
+		if (users.length === 0) {
 			return res.status(404).send("User not found");
 		}
-		const user = userRows[0];
+		const user = users[0];
 
 		// Fetch all accounts for the user
-		const [accountRows] = await db.query("SELECT * FROM accounts WHERE user_id = ?", [userId]);
+		const [accounts] = await db.execute("SELECT * FROM accounts WHERE user_id = ?", [user.user_id]);
 
 		// For each account, fetch the corresponding trades
-		for (let account of accountRows) {
-			const [tradeRows] = await db.query("SELECT * FROM trades WHERE account_id = ?", [account.account_id]);
-			account.trades = tradeRows;
+		for (let acc of accounts) {
+			const [trades] = await db.execute("SELECT * FROM trades WHERE account_id = ?", [acc.account_id]);
+			acc.trades = trades;
 		}
 
 		// Now attach accounts to the user object
-		user.accounts = accountRows;
+		user.accounts = accounts;
 
 		// Return the full user data with accounts and trades
 		res.json(user);
@@ -47,8 +83,6 @@ app.get("/api/users/:userId/full", async (req, res) => {
 		res.status(500).send("Server error");
 	}
 });
-
-// --- USERS ---
 
 // --- ACCOUNTS ---
 
@@ -69,6 +103,8 @@ app.post("/api/accounts/:accountId/trades", async (req, res) => {
 			fees,
 			profit,
 		]);
+
+		res.status(201).json({ message: "Trade added successfully" });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
@@ -79,6 +115,8 @@ app.delete("/api/accounts/:accountId/trades/:tradeId", async (req, res) => {
 
 	try {
 		await db.execute("DELETE FROM trades WHERE trade_id = ?", [tradeId]);
+
+		res.status(201).json({ message: "Trade removed successfully" });
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}

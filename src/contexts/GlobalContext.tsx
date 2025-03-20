@@ -3,11 +3,13 @@ import { User, Account, Trade } from "../types";
 
 interface GlobalState {
 	API_ADDRESS: string;
-	user: User;
+	isUserManage: any;
+	setIsUserManage: any;
+	user: User | null;
 	setUser: any;
-	currentAccount: Account;
-	setCurrentAccount: (account: Account) => void;
-	trades: Trade[];
+	currentAccount: Account | null;
+	setCurrentAccount: any;
+	trades: Trade[] | null;
 	setTrades: any;
 }
 
@@ -15,19 +17,12 @@ export const GlobalContext = createContext<GlobalState | null>(null);
 
 export const GlobalProvider = ({ children }: any) => {
 	const API_ADDRESS = "http://localhost:5000";
-	const [user, setUser] = useState<User>({
-		userId: -1,
-		username: "",
-		accounts: [],
-	});
-	const [currentAccount, setCurrentAccount] = useState<Account>({
-		accountId: -1,
-		accountName: "",
-		trades: [],
-	});
-	const [trades, setTrades] = useState<Trade[]>([]);
+	const [isUserManage, setIsUserManage] = useState({ isRegistering: false, isSigningIn: false });
+	const [user, setUser] = useState(null);
+	const [currentAccount, setCurrentAccount] = useState(null);
+	const [trades, setTrades] = useState(null);
 
-	return <GlobalContext.Provider value={{ API_ADDRESS, user, setUser, currentAccount, setCurrentAccount, trades, setTrades }}>{children}</GlobalContext.Provider>;
+	return <GlobalContext.Provider value={{ API_ADDRESS, isUserManage, setIsUserManage, user, setUser, currentAccount, setCurrentAccount, trades, setTrades }}>{children}</GlobalContext.Provider>;
 };
 
 export const useGlobalState = () => {
