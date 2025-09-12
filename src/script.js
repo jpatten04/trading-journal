@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
 	// trade input form
 	const tradeForm = document.querySelector(".trade-form");
 
@@ -20,6 +20,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// all trades
 	let trades = JSON.parse(localStorage.getItem("trades")) || [];
+
+	// -------------- Populate Temporary Trades --------------
+	if (!localStorage.getItem("trades")) {
+		try {
+			const response = await fetch("assets/temp_data.csv");
+			if (response.ok) {
+				const csv = await response.text();
+				parseAndStoreTradesFromCSV(csv);
+			} // if
+		} catch (e) { console.log("No temp data detected") }
+	}
+	// -------------------------------------------------------
 
 	// Add New Trade
 	tradeForm.addEventListener("submit", (event) => {
@@ -424,7 +436,7 @@ function triggerFileUpload() {
 	document.getElementById("fileInput").click();
 } // triggerFileUpload
 
-// takes the trades from csv and stores in local storage
+// accepts a valid csv file and calls parse function
 function importTradesFromCSV() {
 	let fileInput = document.getElementById("fileInput");
 	let file = fileInput.files[0];
@@ -436,37 +448,41 @@ function importTradesFromCSV() {
 
 	let reader = new FileReader();
 	reader.onload = function (event) {
-		let csv = event.target.result;
-		let lines = csv
-			.split("\n")
-			.map((line) => line.trim())
-			.filter((line) => line);
-
-		if (lines.length < 2) {
-			alert("Invalid CSV format.");
-			return;
-		} // if
-
-		let headers = lines[0].split(",");
-		let trades = JSON.parse(localStorage.getItem("trades")) || [];
-
-		for (let i = 1; i < lines.length; i++) {
-			let values = lines[i].split(",");
-			if (values.length == headers.length) {
-				let trade = {};
-				headers.forEach((header, index) => {
-					let value = values[index].replace(/"/g, "");
-					trade[header] = isNaN(value) ? value : parseFloat(value);
-				});
-				trades.push(trade);
-			} // if
-		} // for
-
-		localStorage.setItem("trades", JSON.stringify(trades));
-
-		updateTrades();
-		location.reload();
+		parseAndStoreTradesFromCSV(event.target.result);
 	};
 
 	reader.readAsText(file);
 } // importTradesFromCSV
+
+// takes the trades from csv and stores in local storage
+function parseAndStoreTradesFromCSV(csv) {
+	let lines = csv
+		.split("\n")
+		.map((line) => line.trim())
+		.filter((line) => line);
+
+	if (lines.length < 2) {
+		alert("Invalid CSV format.");
+		return;
+	} // if
+
+	let headers = lines[0].split(",");
+	let trades = JSON.parse(localStorage.getItem("trades")) || [];
+
+	for (let i = 1; i < lines.length; i++) {
+		let values = lines[i].split(",");
+		if (values.length == headers.length) {
+			let trade = {};
+			headers.forEach((header, index) => {
+				let value = values[index].replace(/"/g, "");
+				trade[header] = isNaN(value) ? value : parseFloat(value);
+			});
+			trades.push(trade);
+		} // if
+	} // for
+
+	localStorage.setItem("trades", JSON.stringify(trades));
+
+	updateTrades();
+	location.reload();
+} // parseAndStoreTradesFromCSV
