@@ -1,4 +1,4 @@
-# Futures Trading Journal 📈
+# Futures Trading Journal
 
 A sophisticated, client-side web application for futures traders to meticulously track their performance. This journal calculates advanced statistics, provides temporal analysis (daily, weekly, monthly), and offers full data portability via CSV files.
 
