@@ -21,14 +21,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 	// all trades
 	let trades = JSON.parse(localStorage.getItem("trades")) || [];
 
-	// -------------- Populate Temporary Trades --------------
-	try {
-		const response = await fetch("assets/temp_data.csv");
-		if (response.ok) {
-			const csv = await response.text();
-			parseAndStoreTradesFromCSV(csv);
-		} // if
-	} catch (e) { console.log("No temp data detected") }
+	// -------------- REMOVE FOR PERSONAL USE --------------
+	// populates local storage with temporary trade data
+	// if data already exits or file does NOT exist, nothing happens
+	if (!localStorage.getItem("trades")) {
+		try {
+			const response = await fetch("assets/temp_data.csv");
+			if (response.ok) {
+
+
+				const csv = await response.text();
+				parseAndStoreTradesFromCSV(csv);
+			} // if
+		} catch (e) { console.log("No temp data detected") }
+	} // if
 	// -------------------------------------------------------
 
 	// Add New Trade
