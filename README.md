@@ -27,3 +27,19 @@ A sophisticated, client-side web application for futures traders to meticulously
 *   **Data Persistence:** `localStorage` API (to save trades between sessions)
 *   **File Handling:** `FileReader` API (for CSV import), Programmatic CSV Generation & Download (for export)
 *   **Styling:** Modern CSS (Flexbox, Grid, Custom Properties)
+
+## Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/jpatten04e/trading-journal.git
+    ```
+2.  Navigate to the project directory:
+    ```bash
+    cd trading-journal
+    ```
+3.  Open `index.html` in your browser.
+
+PSA: 
+* For temporary data to show, project must be run in live server (Ex. VSCode Live Server extension).
+* Remove (`assets/temp_data.csv`) and/or edit `src/script.js` for personal use to stop loading the temporary data.
