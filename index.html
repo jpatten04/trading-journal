@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/styles.css" rel="stylesheet">
+    <script src="src/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <title>Trading Journal</title>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="header">
+            <div class="left">
+                <h1>Trading Dashboard</h1>
+                <div class="tabs">
+                    <button onclick="showTab('stats')">Statistics</button>
+                    <button onclick="showTab('trade-calendar'), updatePnLCalendar()">PnL Calendar</button>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button onclick="triggerFileUpload()">Upload</button>
+                <input type="file" id="fileInput" accept=".csv" style="display: none" onchange="importTradesFromCSV(event)">
+                <button onclick="exportTradesToCSV()">Download</button>
+            </div>
+        </header>
+        <div class="stats" id="tab-content">
+                <div class="stat-content pnl">
+                    <div class="total-pnl">
+                        <h4>Total PnL</h4>
+                        <h1 id="pnl">$0.00</h1>
+                    </div>
+                    <div class="totals-profit-loss">
+                        <div class="total-profit">
+                            <h4>Total profit</h4>
+                            <h2 class="positive" id="total-profit">$0.00</h1>
+                        </div>
+                        <div class="total-loss">
+                            <h4>Total loss</h4>
+                            <h2 class="negative" id="total-loss">$0.00</h1>
+                        </div>
+                    </div>
+                    <div class="pnl-line">
+                        <div id="profit"></div>
+                        <div id="loss"></div>
+                    </div>
+                </div>
+                <div class="stat-content" id="trades-amount">
+                    <div class="biggest-win">
+                        <h4>Biggest Win</h4>
+                        <h1 class="positive" id="biggest-win">$0.00</h1>
+                    </div>
+                    <div class="biggest-loss">
+                        <h4>Biggest Loss</h4>
+                        <h1 class="negative" id="biggest-loss">$0.00</h1>
+                    </div>
+                </div>
+                <div class="stat-content wins-losses">
+                    <div class="win-rate">
+                        <h4>Win Rate</h4>
+                        <h1 id="win-rate">0%</h1>
+                    </div>
+                    <div class="totals-win-loss">
+                        <div class="total-wins">
+                            <h4>Total wins</h4>
+                            <h2 class="positive" id="total-wins">0</h2>
+                        </div>
+                        <div class="total-losses">
+                            <h4>Total losses</h4>
+                            <h2 class="negative" id="total-losses">0</h2>
+                        </div>
+                    </div>
+                    <div class="win-loss-line">
+                        <div id="wins"></div>
+                        <div id="losses"></div>
+                    </div>
+                </div>
+                <div class="stat-content" id="trades-average">
+                    <div class="average-win">
+                        <h4>Average Win</h4>
+                        <h1 class="positive" id="average-win">$0.00</h1>
+                    </div>
+                    <div class="average-loss">
+                        <h4>Average Loss</h4>
+                        <h1 class="negative" id="average-loss">$0.00</h1>
+                    </div>
+                </div>
+                <div class="stat-content" id="pnl-history">
+                    <header class="chart-header">
+                        <h4>PnL History</h4>
+                        <select id="chart-filter" onchange="updateProfitChart()">
+                            <option value="by-trade">By Trade</option>
+                            <option value="by-day">By Day</option>
+                        </select>
+                    </header>
+                    <canvas id="profit-chart"></canvas>
+                </div>
+        </div>
+        <div class="trade-calendar" id="tab-content">
+            <div class="calendar"></div>
+            <div class="weekly-total">
+                <h2 class="weekly-summary-title">Weekly PnL</h2>
+                <div class="week-list"></div>
+            </div>
+        </div>
+        <form class="trade-form">
+            <input type="date" id="date" placeholder="Date" required>
+            <select id="symbol">
+                <option value="MNQ">MNQ</option>
+                <option value="NQ">NQ</option>
+                <option value="MES">MES</option>
+                <option value="ES">ES</option>
+            </select>
+            <select id="direction">
+                <option value="long">Long</option>
+                <option value="short">Short</option>
+            </select>
+            <input type="number" id="entry" placeholder="Entry Price" step="0.01" required>
+            <input type="number" id="exit" placeholder="Exit Price" step="0.01" required>
+            <input type="number" id="contracts" placeholder="Contracts" required>
+            <input type="number" id="fees" placeholder="Fees" step="0.01" required>
+            <button type="submit">Add</button>
+        </form>
+        <div class="trade-history">
+            <header class="history-header">
+                <h4>Trade History</h4>
+                <h5 id="totalTrades">Total: 0</h5>
+                <button onclick="clearTrades()">Clear All</button>
+            </header>
+            <div class="trade-table">
+                <table>
+                    <thead id="tradeTableHeader">
+                        <tr>
+                            <th>Date</th>
+                            <th>Symbol</th>
+                            <th>Direction</th>
+                            <th>Entry Price</th>
+                            <th>Exit Price</th>
+                            <th>Contracts</th>
+                            <th>Fees</th>
+                            <th>Profit</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradeTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
