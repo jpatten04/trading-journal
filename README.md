@@ -4,6 +4,8 @@ A sophisticated, client-side web application for futures traders to meticulously
 
 **Live Demo:** [https://jpatten04.github.io/trading-journal/](https://jpatten04.github.io/trading-journal/)
 
+> **Support this project:** If you find this tool useful, please consider [buying me a coffee](https://buymeacoffee.com/jakepatten) to show your appreciation. Thank you!
+
 ![Futures Trading Journal Stats Screenshot](./assets/trading-journal-stats.png)
 ![Futures Trading Journal Calendar Screenshot](./assets/trading-journal-calendar.png)
 
@@ -32,7 +34,7 @@ A sophisticated, client-side web application for futures traders to meticulously
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/jpatten04e/trading-journal.git
+    git clone https://github.com/jpatten04/trading-journal.git
     ```
 2.  Navigate to the project directory:
     ```bash
@@ -44,5 +46,3 @@ PSA:
 
 -   For temporary data to show, project must be run in live server (Ex. VSCode Live Server extension).
 -   Remove (`assets/temp_data.csv`) and/or edit `src/script.js` for personal use to stop loading the temporary data.
-
-[Buy me a coffee](https://buymeacoffee.com/jakepatten) if you like it!

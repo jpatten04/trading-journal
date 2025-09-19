@@ -51,6 +51,18 @@ body {
 	display: flex;
 	gap: 1rem;
 }
+.header .coffee-button {
+	background-color: rgb(78, 187, 255);
+	color: rgb(0, 0, 0);
+	align-self: center;
+	font-size: 2.1rem;
+	padding: 0 1rem;
+	border-radius: 2rem;
+	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.6);
+}
+.header .coffee-button:hover {
+	scale: 120%;
+}
 .header button {
 	background-color: #555;
 	height: 2.4rem;
