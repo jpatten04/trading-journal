@@ -4,7 +4,7 @@ A sophisticated, client-side web application for futures traders to meticulously
 
 **Live Demo:** [https://jpatten04.github.io/trading-journal/](https://jpatten04.github.io/trading-journal/)
 
-> **Support this project:** If you find this tool useful, please consider [buying me a coffee](https://buymeacoffee.com/jakepatten) to show your appreciation. Thank you!
+> **Support this project:** If you find this tool useful, please consider [buying me a coffee](https://buymeacoffee.com/jakepatten). Thank you!
 
 ![Futures Trading Journal Stats Screenshot](./assets/trading-journal-stats.png)
 ![Futures Trading Journal Calendar Screenshot](./assets/trading-journal-calendar.png)
