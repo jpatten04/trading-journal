@@ -45,4 +45,4 @@ PSA:
 -   For temporary data to show, project must be run in live server (Ex. VSCode Live Server extension).
 -   Remove (`assets/temp_data.csv`) and/or edit `src/script.js` for personal use to stop loading the temporary data.
 
-[Buy me a coffee](buymeacoffee.com/jakepatten) if you like it!
+[Buy me a coffee](https://buymeacoffee.com/jakepatten) if you like it!
